@@ -25,3 +25,5 @@ after_success:
   - docker push tdipods/multi-nginx
   - docker push tdipods/multi-server
   - docker push tdipods/multi-worker
+
+  #IPush to Git
