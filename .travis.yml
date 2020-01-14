@@ -1,0 +1,27 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t tdipods/react-test -f ./client/Dockerfile.dev ./client
+# Here goes...
+# docker build myotherproject
+
+
+script:
+# - docker run myotherproject runmytests
+  - docker run -e CI=true tdipods/react-test npm test
+
+after_success:
+  - docker build -t tdipods/multi-client ./client
+  - docker build -t tdipods/multi-nginx ./nginx
+  - docker build -t tdipods/multi-server ./server
+  - docker build -t tdipods/multi-worker ./worker
+
+  # Log in to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push tdipods/multi-client
+  - docker push tdipods/multi-nginx
+  - docker push tdipods/multi-server
+  - docker push tdipods/multi-worker
